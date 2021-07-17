@@ -25,3 +25,4 @@
 $string['mauticurl'] = 'Mautic Url';
 $string['mauticurldesc'] = 'Please insert the URL of your mautic instalation.';
 $string['mauticurlvalidateerror'] = 'Please insert a valid full url, which starts with http:// or https://';
+$string['addmauticformevent'] = 'Add Mautic Form Event';

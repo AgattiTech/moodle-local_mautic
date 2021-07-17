@@ -17,10 +17,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configurl('local_mautic/mauticurl', get_string('mauticurl', 'local_mautic'), get_string('mauticurldesc', 'local_mautic'), 0));
         
     if ($section == 'local_mautic') {
+    
+        $settings->add(new admin_setting_description('addmauticformevent', get_string('addmauticformevent', 'local_mautic'), "<a href='$CFG->wwwroot/local/mautic/forms.php'>" . get_string('addmauticformevent', 'local_mautic') . "</a><br><br><br>"));
         
-//        $form_createsettings = new settings_form();
-//        
-//        echo $OUTPUT->heading('Settings');
-//        $form_createsettings->display();
     }
 }
