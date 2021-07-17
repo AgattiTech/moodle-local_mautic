@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_mautic/mauticjs
+
+    Renders an HTML <script> element intended for the page's head
+    section.
+
+    Classes required for JS:                                                                                                        
+    * none                                                                                                                          
+                                                                                                                                    
+    Data attributes required for JS:                                                                                                
+    * none                                                                                                                          
+                                                                                                                                    
+    Context variables required for this template:                                                                                   
+    * propertyid Google Analytics property identifier
+    * dimensions Array of custom dimension values, each item an assoc. array index => value
+    * metrics Array of custom metric values, each item an assoc. array index => value
+
+    Example context (json):
+    {
+        "propertyid": "PROPERTY-ID",
+        "dimensions": [ { "index":1, "value":"student" }, { "index":2, "value":"ENG101-002" } ],
+        "metrics": [ { "index":1, "value":10 }, { "index":2, "value":8 } ]
+    }
+}}
+  <!-- Mautic js -->
+  <script>
+    (function(w,d,t,u,n,a,m){w['MauticTrackingObject']=n;
+        w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments)},a=d.createElement(t),
+        m=d.getElementsByTagName(t)[0];a.async=1;a.src=u;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://agatti.tech/mkt/mtc.js','mt');
+    {{#loggedin}}
+        mt('send', 'pageview', { firstname: '{{firstname}}', lastname: '{{lastname}}', email: '{{email}}' });
+    {{/loggedin}}
+    {{^loggedin}}
+        mt('send', 'pageview');
+    {{/loggedin}}
+  </script>
+  <meta test="{{two}}">
+  <!-- End Mautic js -->
+ 
