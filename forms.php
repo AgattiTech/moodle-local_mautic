@@ -1,7 +1,7 @@
 <?php
 
 require_once('../../config.php');
-require_once('./classes/form/options_form.php');
+require_once('./classes/form/settings_form.php');
 
 
 
@@ -13,11 +13,11 @@ $PAGE->set_heading('Mautic Administration');
 
 //$action = optional_param('action', '', PARAM_ALPHAEXT);
 //$couponid = optional_param('id', '', PARAM_RAW);
-$form_createoptions = new options_form();
+$form_createsettings = new settings_form();
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Options');
-$form_createcoupon->display();
+echo $OUTPUT->heading('Settings');
+$form_createsettings->display();
 echo $OUTPUT->footer();
 
 //require_admin();

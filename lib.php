@@ -44,6 +44,7 @@ function local_mautic_before_standard_html_head() : string {
         $params['firstname'] = $USER->firstname;
         $params['lastname']  = $USER->lastname;
         $params['email']     = $USER->email;
+        $params['mauticurl'] = get_config('local_mautic', 'mauticurl');
     }
 
     return $OUTPUT->render_from_template("local_mautic/mauticjs", $params) . "\n";
