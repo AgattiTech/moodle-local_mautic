@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/mautic/db" VERSION="2021071101" COMMENT="XMLDB file for Moodle local/mautic"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_mautic_fevent" COMMENT="Table to store events">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="event" />
+        <FIELD NAME="event" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="event" UNIQUE="true" NEXT="formconfigid" PREVIOUS="id" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="id" UNIQUE="false" FIELDS="id"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="local_mautic_fdata" COMMENT="Table to store the relation of coupons and courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="feventid"/>
+        <FIELD NAME="feventid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="mauticfield" PREVIOUS="id" />
+        <FIELD NAME="mauticfield" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" NEXT="moodlesource" PREVIOUS="feventid" />
+        <FIELD NAME="moodlesource" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Course id of the coupon" NEXT="mauticfield" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="id" UNIQUE="false" FIELDS="id"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
+
