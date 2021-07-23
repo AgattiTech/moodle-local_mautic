@@ -27,8 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin             = new stdClass();
 
-$plugin->version    = 2021071101;
+$plugin->version    = 2021072300;
 $plugin->requires   = 2018120300;
 $plugin->component  = 'local_mautic';
+
+$plugin->dependencies = array(
+    'local_guzzle' => 2020050400
+);
 
 
