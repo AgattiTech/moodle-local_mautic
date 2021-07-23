@@ -189,5 +189,18 @@ class datalib {
 
         return $data;
     }
+    
+    public function getformlinksfromevent($event) {
+        $data = array();
+        $eventname = $event->data['target'];
+        
+        $formevents = $DB->get_records('local_mautic_fevent', ['event' => $eventname]);
+        foreach($formevents as $key => $formevent) {
+            $data[$key] = (array) $formevent;
+            $data[$key][] = $DB->get_records('local_mautic_fdata', ['feventid' => $formevent->id]);
+        }
+
+        return $data;
+    }
 
 }

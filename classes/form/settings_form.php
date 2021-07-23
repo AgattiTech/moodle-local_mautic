@@ -15,7 +15,7 @@ class settings_form extends moodleform
 
         $eventsoptions = array(
             '0' => 'Select Event', 
-            'student_enrolment' => 'User Enrolment',
+            'user_enrolment' => 'User Enrolment',
         );
 
         $mform->addElement('select', 'event', get_string('eventselect', 'local_mautic'), $eventsoptions);

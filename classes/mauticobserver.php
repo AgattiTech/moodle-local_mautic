@@ -20,7 +20,7 @@ class mauticobserver {
 		$datalib = new \local_mautic\lib\datalib();
 		$mauticurl = get_config('local_mautic', 'mauticurl');
 
-//		$formlinks = $datalib->getformlinksfromevent($event);
+		$formlinks = $datalib->getformlinksfromevent($event);
 		$fields = $datalib->getenrolfieldsfromevent($event);
 		
 		$httpClient = new \GuzzleHttp\Client();
