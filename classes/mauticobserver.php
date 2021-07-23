@@ -11,12 +11,17 @@ use GuzzleHttp\RequestOptions;
 class mauticobserver {
 
     public static function enrolusercourse($event) {
+        global $CFG;
         $myfile = fopen($CFG->dirroot . "/local/mautic/logs/enrolusercourse.txt", "w") or die("Unable to open file!");
 		$txt = var_export($event, true);
 		fwrite($myfile, $txt);
 		fclose($myfile);
-		
+
+		$datalib = new \local_mautic\lib\datalib();
 		$mauticurl = get_config('local_mautic', 'mauticurl');
+
+//		$formlinks = $datalib->getformlinksfromevent($event);
+		$fields = $datalib->getenrolfieldsfromevent($event);
 		
 		$httpClient = new \GuzzleHttp\Client();
 		$request_options = [];

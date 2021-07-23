@@ -170,5 +170,24 @@ class datalib {
             
         return $dataobject;
     }
+    
+    public function getenrolfieldsfromevent($event) {
+        $data = array();
+        $data['userid'] = $event->data['relateduserid'];
+        $data['courseid'] = $event->data['courseid'];
+        $data['enrolmentmethod'] = $event->data['other']['enrol'];
+        
+        $user = $DB->get_record('user', ['id' => $data['userid']]);
+        $course = $DB->get_record('course', ['id' => $data['courseid']]);
+        
+        $data['userfirstname'] = $user->firstname;
+        $data['userlastname'] = $user->lastname;
+        $data['useremail'] = $user->email;
+        
+        $data['coursefullname'] = $course->fullname;
+        $data['courseshortname'] = $course->shortname;
+
+        return $data;
+    }
 
 }
