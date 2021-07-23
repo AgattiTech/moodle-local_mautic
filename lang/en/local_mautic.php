@@ -26,3 +26,6 @@ $string['mauticurl'] = 'Mautic Url';
 $string['mauticurldesc'] = 'Please insert the URL of your mautic instalation.';
 $string['mauticurlvalidateerror'] = 'Please insert a valid full url, which starts with http:// or https://';
 $string['addmauticformevent'] = 'Add Mautic Form Event';
+$string['eventselect'] = 'Select Moodle Event';
+$string['enrolmentevdesclb'] = 'Event Variables';
+$string['enrolevdesc'] = 'Integer quis lacus a libero molestie egestas a eu lacus. Nulla eget consectetur sapien, non feugiat nulla.';
