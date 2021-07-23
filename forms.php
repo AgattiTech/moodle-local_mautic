@@ -1,28 +1,45 @@
 <?php
 
 require_once('../../config.php');
+require_once('../../lib/formslib.php');
 require_once('./classes/form/settings_form.php');
 
-
+require_admin();
 
 $PAGE->set_url(new moodle_url("$CFG->wwwroot/local/mautic/forms.php"));
 $PAGE->set_context(\context_system::instance());
 $PAGE->set_title('Mautic Admin Config');
 $PAGE->set_heading('Mautic Administration');
 
-
-//$action = optional_param('action', '', PARAM_ALPHAEXT);
-//$couponid = optional_param('id', '', PARAM_RAW);
 $form_createsettings = new settings_form();
+$datalib = new \local_mautic\lib\datalib();
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading('Settings');
-$form_createsettings->display();
-echo $OUTPUT->footer();
+if ($data = $form_createsettings->get_data()) {
+    try {
+        //Create
+        $datalib->create_eventlink($data);
+        redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+    } catch (Exception $e) {
+        redirect($PAGE->url, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
+    }
+} else {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading('Settings');
+    $form_createsettings->display();
+    echo $OUTPUT->footer();
+}
 
-//require_admin();
 
-//$renderer = $PAGE->get_renderer('enrol_coupon');
+
+//$renderer = $PAGE->get_renderer('local_mautic');
+
+//echo $OUTPUT->header();
+//echo $OUTPUT->heading('Create Event Integrations');
+//echo $renderer->show_events();
+//$params = ['action' => 'create'];
+//$addurl = new moodle_url("$CFG->wwwroot/local/mautic/forms.php", $params);
+//echo $renderer->single_button($addurl, get_string('createnewcoupon', 'enrol_coupon'));
+//echo $OUTPUT->footer();
 
 //$datalib = new \enrol_coupon\data\datalib();
 
