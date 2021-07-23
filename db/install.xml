@@ -7,7 +7,8 @@
     <TABLE NAME="local_mautic_fevent" COMMENT="Table to store events">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="event" />
-        <FIELD NAME="event" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="event" UNIQUE="true" NEXT="formconfigid" PREVIOUS="id" />
+        <FIELD NAME="event" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="event" UNIQUE="true" NEXT="mauticformid" PREVIOUS="id" />
+        <FIELD NAME="mauticformid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="event" UNIQUE="true" PREVIOUS="event" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
