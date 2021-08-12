@@ -12,20 +12,77 @@ class mauticobserver {
 
     public static function enrolusercourse($event) {
         global $CFG;
+
+		$datalib = new \local_mautic\lib\datalib();
+
+		$formlinks = $datalib->getformlinksfromevent($event);
+		$myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_formlinks.txt", "w") or die("Unable to open file!");
+		$txt = var_export($formlinks, true);
+		fwrite($myfile, $txt);
+		fclose($myfile);
+		
+		$fields = $datalib->getenrolfieldsfromformlinks($formlinks);
+		$myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_fields.txt", "w") or die("Unable to open file!");
+		$txt = var_export($fields, true);
+		fwrite($myfile, $txt);
+		fclose($myfile);
+		
+		$eventarray = array_values((array) $event);
+
+		foreach($formlinks as $form) {
+		    $preparedfields = self::preparefields($form, $fields, $eventarray);
+		    self::submitform($preparedfields);
+		}
+    }
+
+    private static function preparefields($form, $fields, $event) {
+        global $CFG;
+    
         $myfile = fopen($CFG->dirroot . "/local/mautic/logs/enrolusercourse.txt", "w") or die("Unable to open file!");
 		$txt = var_export($event, true);
 		fwrite($myfile, $txt);
 		fclose($myfile);
 
-		$datalib = new \local_mautic\lib\datalib();
-		$mauticurl = get_config('local_mautic', 'mauticurl');
+		$baseparams = array(
+            'mauticform[formId]' => $form['mauticformid'],
+            'mauticform[return]' => $CFG->wwwroot,
+            'mauticform[messenger]' => '1',
+        );
 
-		$formlinks = $datalib->getformlinksfromevent($event);
-		$fields = $datalib->getenrolfieldsfromevent($event);
+        $formparams = array();
+
+        foreach($fields[$form['id']] as $field) {
+            $mauticfield = $field->mauticfield;
+            $formparams["mauticform[$mauticfield]"] = $event[0][$field->moodlesource];
+        }
+
+		return array_merge($baseparams, $formparams);
+    }
+    
+    private static function submitform($preparedfields) {
+        global $CFG;
+    
+        $myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_COOKIE.txt", "w") or die("Unable to open file!");
+		$txt = var_export($_COOKIE, true);
+		fwrite($myfile, $txt);
+		fclose($myfile);
 		
-		$httpClient = new \GuzzleHttp\Client();
+		$myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_SESSION.txt", "w") or die("Unable to open file!");
+		$txt = var_export($_SESSION, true);
+		fwrite($myfile, $txt);
+		fclose($myfile);
+		
+		$myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_SERVER.txt", "w") or die("Unable to open file!");
+		$txt = var_export($_SERVER, true);
+		fwrite($myfile, $txt);
+		fclose($myfile);
+		
+		$mauticurl = get_config('local_mautic', 'mauticurl');
+		
+        $httpClient = new \GuzzleHttp\Client();
 		$request_options = [];
-		$request_url = $mauticurl . '/form/submit?formId=2';
+		$request_url = $mauticurl . '/form/submit?formId=' . $preparedfields["mauticform[formId]"];
+		$domain = preg_replace("(^https?://)", "", $mauticurl);
 		
 		try {
             $mautic_referer_id = (isset($_COOKIE['mautic_referer_id'])) ? $_COOKIE['mautic_referer_id'] : "";
@@ -48,14 +105,7 @@ class mauticobserver {
             $request_options[RequestOptions::COOKIES] = $cookieJar;
             $request_options[RequestOptions::HEADERS]['X-Forwarded-For'] = $ip_address;
             
-            $baseparams = array(
-                'mauticform[formId]' => 2,
-                'mauticform[return]' => $CFG->wwwroot,
-                'mauticform[messenger]' => '1',
-            );
-            //TODO: getRequestData - get data from event and put it as mautic form data
-            $formparams = array("mauticform[nome]" => "Joe");
-            $request_options['form_params'] = array_merge($baseparams, $formparams);
+            $request_options['form_params'] = $preparedfields;
 
             $response = $httpClient->request('POST', $request_url, $request_options);
 
@@ -66,10 +116,6 @@ class mauticobserver {
             
             return;
         }
-		
-    }
-
-    function submitform($fields) {
-        
+    
     }
 }
