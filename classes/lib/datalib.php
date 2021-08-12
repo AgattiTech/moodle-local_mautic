@@ -7,10 +7,14 @@ defined('MOODLE_INTERNAL') || die();
 
 class datalib {
 
-  public function __construct() {
-    $this->tableformevent = 'local_mautic_fevent';
-    $this->tableformdata = 'local_mautic_fdata';
-  }
+    protected $tableformevent;
+    
+    protected $tableformdata;
+
+    public function __construct() {
+        $this->tableformevent = 'local_mautic_fevent';
+        $this->tableformdata = 'local_mautic_fdata';
+    }
 
   public function create_eventlink($data) {
     global $DB, $CFG;
@@ -171,33 +175,28 @@ class datalib {
         return $dataobject;
     }
     
-    public function getenrolfieldsfromevent($event) {
+    public function getenrolfieldsfromformlinks($formlinks) {
+        global $DB;
+
         $data = array();
-        $data['userid'] = $event->data['relateduserid'];
-        $data['courseid'] = $event->data['courseid'];
-        $data['enrolmentmethod'] = $event->data['other']['enrol'];
         
-        $user = $DB->get_record('user', ['id' => $data['userid']]);
-        $course = $DB->get_record('course', ['id' => $data['courseid']]);
-        
-        $data['userfirstname'] = $user->firstname;
-        $data['userlastname'] = $user->lastname;
-        $data['useremail'] = $user->email;
-        
-        $data['coursefullname'] = $course->fullname;
-        $data['courseshortname'] = $course->shortname;
+        foreach($formlinks as $form) {
+            $data[] = $DB->get_records('local_mautic_fdata', ['feventid' => $form->id]);
+        }
 
         return $data;
     }
     
     public function getformlinksfromevent($event) {
+        global $DB, $CFG;
+
         $data = array();
-        $eventname = $event->data['target'];
+        $eventname = $event->target;
         
         $formevents = $DB->get_records('local_mautic_fevent', ['event' => $eventname]);
+
         foreach($formevents as $key => $formevent) {
             $data[$key] = (array) $formevent;
-            $data[$key][] = $DB->get_records('local_mautic_fdata', ['feventid' => $formevent->id]);
         }
 
         return $data;
