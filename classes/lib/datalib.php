@@ -181,7 +181,7 @@ class datalib {
         $data = array();
         
         foreach($formlinks as $form) {
-            $data[] = $DB->get_records('local_mautic_fdata', ['feventid' => $form->id]);
+            $data[$form['id']] = $DB->get_records('local_mautic_fdata', ['feventid' => $form['id']]);
         }
 
         return $data;
