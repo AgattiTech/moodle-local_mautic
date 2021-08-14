@@ -129,6 +129,13 @@ class datalib {
                 'moodlesource' => $data->moodletext5,
             );
         }
+        
+        if(!empty($data->mautictext6) && !empty($data->moodletext6)){    
+            $dataobject['formdata'][] = array(
+                'mauticfield' => $data->mautictext6,
+                'moodlesource' => $data->moodletext6,
+            );
+        }
 
         return $dataobject;
     }
@@ -138,7 +145,7 @@ class datalib {
 
         $data = array();
 
-        foreach($formlinks as $form) {
+        foreach($formevents as $form) {
             $data[$form['id']] = $DB->get_records('local_mautic_fdata', ['feventid' => $form['id']]);
         }
 
@@ -168,6 +175,13 @@ class datalib {
 
         $user = $DB->get_record('user', ['id' => $event->relateduserid]);
         $course = $DB->get_record('course', ['id' => $event->courseid]);
+        
+        $myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_usercourse.txt", "w") or die("Unable to open file!");
+	    $txt = var_export($user, true);
+	    $txt .= "\n\n";
+	    $txt .= var_export($course, true); 
+	    fwrite($myfile, $txt);
+	    fclose($myfile);
 
         $data['firstname'] = $user->firstname;
         $data['lastname'] = $user->lastname;
@@ -175,6 +189,7 @@ class datalib {
         $data['email'] = $user->email;
         $data['coursefullname'] = $course->fullname;
         $data['courseid'] = $course->id;
+        $data['enrol_method'] = $event->other['enrol'];
 
         return $data;
     }

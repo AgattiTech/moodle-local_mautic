@@ -36,6 +36,7 @@ class settings_form extends moodleform {
             'phone' => 'Phone',
             'coursefullname' => 'Course Name',
             'courseid' => 'Course Id',
+            'enrol_method' => 'Enrol Method',
         );
 
         $mform->addElement('hidden', 'id', '');
@@ -114,15 +115,15 @@ class settings_form extends moodleform {
         $mform->setType('moodletext5', PARAM_TEXT);
         $mform->addGroup($textgroup5, 'text5', '', ' ', false);
 
-//        $textgroup6 = [];
-//        $textgroup6[] =& $mform->createElement('html', '<tr><td>');
-//        $textgroup6[] =& $mform->createElement('text', 'mautictext6', 'MT6');
-//        $textgroup6[] =& $mform->createElement('html', '</td><td>');
-//        $textgroup6[] =& $mform->createElement('select', 'moodletext6', 'T6', $moodlefieldoptions);
-//        $textgroup6[] =& $mform->createElement('html', '</td></tr>');
-//        $mform->setType('mautictext6', PARAM_TEXT);
-//        $mform->setType('moodletext6', PARAM_TEXT);
-//        $mform->addGroup($textgroup6, 'text6', '', ' ', false);
+        $textgroup6 = [];
+        $textgroup6[] =& $mform->createElement('html', '<tr><td>');
+        $textgroup6[] =& $mform->createElement('text', 'mautictext6', 'MT6');
+        $textgroup6[] =& $mform->createElement('html', '</td><td>');
+        $textgroup6[] =& $mform->createElement('select', 'moodletext6', 'T6', $moodlefieldoptions);
+        $textgroup6[] =& $mform->createElement('html', '</td></tr>');
+        $mform->setType('mautictext6', PARAM_TEXT);
+        $mform->setType('moodletext6', PARAM_TEXT);
+        $mform->addGroup($textgroup6, 'text6', '', ' ', false);
 
         $mform->addElement('html', '</table>');
 
@@ -133,7 +134,7 @@ class settings_form extends moodleform {
         $mform->hideIf('text3', 'event', 'neq', 'user_enrolment');
         $mform->hideIf('text4', 'event', 'neq', 'user_enrolment');
         $mform->hideIf('text5', 'event', 'neq', 'user_enrolment');
-//        $mform->hideIf('text6', 'event', 'neq', 'user_enrolment');
+        $mform->hideIf('text6', 'event', 'neq', 'user_enrolment');
 
         $this->add_action_buttons(false, get_string('save'));
         

@@ -20,25 +20,15 @@ class mauticobserver {
 		$fields = $datalib->getformdatafromformevents($formevents);
 
 		$values = $datalib->getsignificantvalues($event);
-		$eventarray = array_values((array) $event);
 
-		foreach($formlinks as $form) {
-		    $preparedfields = self::preparefields($form, $fields, $eventarray);
+		foreach($formevents as $form) {
+		    $preparedfields = self::preparefields($form, $fields, $values);
 		    self::submitform($preparedfields);
 		}
     }
-    
-    private static function preparevalues($event) {
-        
-    }
 
-    private static function preparefields($form, $fields, $event) {
+    private static function preparefields($form, $fields, $values) {
         global $CFG;
-    
-        $myfile = fopen($CFG->dirroot . "/local/mautic/logs/enrolusercourse.txt", "w") or die("Unable to open file!");
-		$txt = var_export($event, true);
-		fwrite($myfile, $txt);
-		fclose($myfile);
 
 		$baseparams = array(
             'mauticform[formId]' => $form['mauticformid'],
@@ -50,29 +40,19 @@ class mauticobserver {
 
         foreach($fields[$form['id']] as $field) {
             $mauticfield = $field->mauticfield;
-            $formparams["mauticform[$mauticfield]"] = $event[0][$field->moodlesource];
+            $formparams["mauticform[$mauticfield]"] = $values[$field->moodlesource];
         }
+        
+        $myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_preparedfields.txt", "w") or die("Unable to open file!");
+	    $txt = var_export($formparams, true);
+	    fwrite($myfile, $txt);
+	    fclose($myfile);
 
 		return array_merge($baseparams, $formparams);
     }
     
     private static function submitform($preparedfields) {
         global $CFG;
-    
-        $myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_COOKIE.txt", "w") or die("Unable to open file!");
-		$txt = var_export($_COOKIE, true);
-		fwrite($myfile, $txt);
-		fclose($myfile);
-		
-		$myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_SESSION.txt", "w") or die("Unable to open file!");
-		$txt = var_export($_SESSION, true);
-		fwrite($myfile, $txt);
-		fclose($myfile);
-		
-		$myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_SERVER.txt", "w") or die("Unable to open file!");
-		$txt = var_export($_SERVER, true);
-		fwrite($myfile, $txt);
-		fclose($myfile);
 		
 		$mauticurl = get_config('local_mautic', 'mauticurl');
 		
