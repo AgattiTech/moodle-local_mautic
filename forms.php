@@ -11,25 +11,39 @@ $PAGE->set_context(\context_system::instance());
 $PAGE->set_title('Mautic Admin Config');
 $PAGE->set_heading('Mautic Administration');
 
-$form_createsettings = new settings_form();
+$action = optional_param('action', '', PARAM_ALPHAEXT);
+$formeventid = optional_param('id', '', PARAM_RAW);
+
+if(is_null($formeventid)) {
+    $form_createsettings = new settings_form();
+} else {
+    $form_createsettings = new settings_form($formeventid);
+}
 $datalib = new \local_mautic\lib\datalib();
 
 $renderer = $PAGE->get_renderer('local_mautic');
-
-$action = optional_param('action', '', PARAM_ALPHAEXT);
-$formeventid = optional_param('id', '', PARAM_RAW);
 
 if ($formeventid) {
     $formevent = $datalib->getformevent($formeventid);
 }
 
 if ($data = $form_createsettings->get_data()) {
-    try {
-        $datalib->createformevent($data);
-        redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
-    } catch (Exception $e) {
-        redirect($PAGE->url, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
+    if($data->id == ''){
+        try {
+            $datalib->createformevent($data);
+            redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+        } catch (Exception $e) {
+            redirect($PAGE->url, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
+        }
+    } else {
+        try {
+            $datalib->updateformevent($data);
+            redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
+        } catch (Exception $e) {
+            redirect($PAGE->url, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
+        }
     }
+    
 } else if ($action == 'delete') {
     if (!optional_param('confirm', false, PARAM_BOOL)) {
         $continueparams = ['action' => 'delete', 'id' => $formeventid, 'sesskey' => sesskey(), 'confirm' => true];

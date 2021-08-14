@@ -29,3 +29,4 @@ $string['addmauticformevent'] = 'Add Mautic Form Event';
 $string['eventselect'] = 'Select Moodle Event';
 $string['enrolmentevdesclb'] = 'Event Variables';
 $string['enrolevdesc'] = 'Integer quis lacus a libero molestie egestas a eu lacus. Nulla eget consectetur sapien, non feugiat nulla.';
+$string['deleteformevent'] = 'Are you sure you want to delete this form event and all its associated data?';

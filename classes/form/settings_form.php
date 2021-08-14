@@ -2,12 +2,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use local_mautic\lib\datalib;
+
 require_once("$CFG->libdir/formslib.php");
 //moodleform is defined in formslib.php
 
-class settings_form extends moodleform
-{
-    
+class settings_form extends moodleform {
+
+    public $formeventid;
+
+    //Add elements to form
+    public function __construct($formeventid = null) {
+        $this->formeventid = $formeventid;    
+	    parent::__construct();
+    }
+
     public function definition() {
         global $CFG;
 
@@ -17,7 +26,7 @@ class settings_form extends moodleform
             '0' => 'Select Event', 
             'user_enrolment' => 'User Enrolment',
         );
-        
+
         //firstname, lastname, email, telephone, coursefullname, courseid
         $moodlefieldoptions = array(
             '0' => 'Select Field', 
@@ -29,6 +38,9 @@ class settings_form extends moodleform
             'courseid' => 'Course Id',
         );
 
+        $mform->addElement('hidden', 'id', '');
+        $mform->setType('id', PARAM_TEXT);
+        
         $mform->addElement('select', 'event', get_string('eventselect', 'local_mautic'), $eventsoptions);
         $mform->setType('event', PARAM_TEXT);
         
@@ -38,11 +50,21 @@ class settings_form extends moodleform
         $descriptiongroup = [];
         $descriptiongroup[] =& $mform->createElement('static', 'enrolevdesc', '', get_string('enrolevdesc', 'local_mautic'));
         $mform->addGroup($descriptiongroup, 'enrolevgroup', '', ' ', false);
-        
+
         $mform->addElement('html', '<table style="text-align:center; margin: 0 auto 30px">');
 
+        $textgroup0 = [];
+        $textgroup0[] =& $mform->createElement('html', '<tr><th>Mautic Form Field</th><th>Moodle Data</th>');
+        $textgroup0[] =& $mform->createElement('html', '<tr><td>');
+        $textgroup0[] =& $mform->createElement('text', 'mautictext0', 'MT0');
+        $textgroup0[] =& $mform->createElement('html', '</td><td>');
+        $textgroup0[] =& $mform->createElement('select', 'moodletext0', 'T0', $moodlefieldoptions);
+        $textgroup0[] =& $mform->createElement('html', '</td></tr>');
+        $mform->setType('mautictext0', PARAM_TEXT);
+        $mform->setType('moodletext0', PARAM_TEXT);
+        $mform->addGroup($textgroup0, 'text0', '', ' ', false);
+        
         $textgroup1 = [];
-        $textgroup1[] =& $mform->createElement('html', '<tr><th>Mautic Form Field</th><th>Moodle Data</th>');
         $textgroup1[] =& $mform->createElement('html', '<tr><td>');
         $textgroup1[] =& $mform->createElement('text', 'mautictext1', 'MT1');
         $textgroup1[] =& $mform->createElement('html', '</td><td>');
@@ -91,28 +113,50 @@ class settings_form extends moodleform
         $mform->setType('mautictext5', PARAM_TEXT);
         $mform->setType('moodletext5', PARAM_TEXT);
         $mform->addGroup($textgroup5, 'text5', '', ' ', false);
-        
-        $textgroup6 = [];
-        $textgroup5[] =& $mform->createElement('html', '<tr><td>');
-        $textgroup5[] =& $mform->createElement('text', 'mautictext6', 'MT6');
-        $textgroup5[] =& $mform->createElement('html', '</td><td>');
-        $textgroup5[] =& $mform->createElement('select', 'moodletext6', 'T6', $moodlefieldoptions);
-        $textgroup5[] =& $mform->createElement('html', '</td></tr>');
-        $mform->setType('mautictext6', PARAM_TEXT);
-        $mform->setType('moodletext6', PARAM_TEXT);
-        $mform->addGroup($textgroup6, 'text6', '', ' ', false);
+
+//        $textgroup6 = [];
+//        $textgroup6[] =& $mform->createElement('html', '<tr><td>');
+//        $textgroup6[] =& $mform->createElement('text', 'mautictext6', 'MT6');
+//        $textgroup6[] =& $mform->createElement('html', '</td><td>');
+//        $textgroup6[] =& $mform->createElement('select', 'moodletext6', 'T6', $moodlefieldoptions);
+//        $textgroup6[] =& $mform->createElement('html', '</td></tr>');
+//        $mform->setType('mautictext6', PARAM_TEXT);
+//        $mform->setType('moodletext6', PARAM_TEXT);
+//        $mform->addGroup($textgroup6, 'text6', '', ' ', false);
 
         $mform->addElement('html', '</table>');
 
         $mform->hideIf('enrolevgroup', 'event', 'neq', 'user_enrolment');
+        $mform->hideIf('text0', 'event', 'neq', 'user_enrolment');
         $mform->hideIf('text1', 'event', 'neq', 'user_enrolment');
         $mform->hideIf('text2', 'event', 'neq', 'user_enrolment');
         $mform->hideIf('text3', 'event', 'neq', 'user_enrolment');
         $mform->hideIf('text4', 'event', 'neq', 'user_enrolment');
         $mform->hideIf('text5', 'event', 'neq', 'user_enrolment');
-        $mform->hideIf('text6', 'event', 'neq', 'user_enrolment');
+//        $mform->hideIf('text6', 'event', 'neq', 'user_enrolment');
 
         $this->add_action_buttons(false, get_string('save'));
+        
+//      $myfile = fopen($CFG->dirroot . "/local/mautic/logs/euc_fei.txt", "w") or die("Unable to open file!");
+//		$txt = var_export($this->formeventid, true);
+//		fwrite($myfile, $txt);
+//		fclose($myfile);
+		
+        if(!is_null($this->formeventid) && $this->formeventid != '') {
+            $datalib = new \local_mautic\lib\datalib();
+            $formevent = $datalib->getformevent($this->formeventid);
+            $formdata = $datalib->getformdatafromformeventid($this->formeventid);
+
+            $mform->setDefault('event', $formevent->event);
+            $mform->setDefault('mauticformid', $formevent->mauticformid);
+            $mform->setDefault('id', $this->formeventid);
+            
+            $fdata = array_values($formdata);
+            foreach($fdata as $key => $data) {
+                $mform->setDefault('mautictext' . $key, $data->mauticfield);
+                $mform->setDefault('moodletext' . $key, $data->moodlesource);
+            }
+        }
     }
     
     //Custom validation should be added here
