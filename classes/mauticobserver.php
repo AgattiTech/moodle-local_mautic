@@ -9,6 +9,26 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Cookie\CookieJar;
 
+class MauticLogger {
+    public static function log_submission($message, $level = 'INFO', $context = []) {
+        global $CFG;
+        $logfile = $CFG->dataroot . '/mautic_integration.log';
+        $timestamp = date('Y-m-d H:i:s');
+
+        $logLine = "[$timestamp] [$level]";
+
+        if (!empty($context['userId'])) {
+            $logLine .= " User: {$context['userId']}";
+        }
+        if (!empty($context['formId'])) {
+            $logLine .= " Form: {$context['formId']}";
+        }
+
+        $logLine .= " $message\n";
+        file_put_contents($logfile, $logLine, FILE_APPEND);
+    }
+}
+
 class mauticobserver {
 
     public static function enrolusercourse($event) {
@@ -107,8 +127,10 @@ class mauticobserver {
             $response = $request_exception->getResponse();
             $message = $request_exception->getMessage();
             
-            return;
+            log_mautic_submission("Submission failed: " . $message, 'ERROR');
         }
+
+        log_mautic_submission("Submission successful", 'INFO');
     
     }
 }

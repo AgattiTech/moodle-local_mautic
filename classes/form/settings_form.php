@@ -162,5 +162,7 @@ class settings_form extends moodleform {
     
     //Custom validation should be added here
     function validation($data, $files){
+        $data->mauticurl = filter_var($data->mauticurl, FILTER_SANITIZE_URL);
+        return $data;
     }
 }
