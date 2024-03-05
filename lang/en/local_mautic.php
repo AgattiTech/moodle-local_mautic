@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['pluginname'] = 'Moodle Mautic';
 $string['mauticurl'] = 'Mautic Url';
 $string['mauticurldesc'] = 'Please insert the URL of your mautic instalation.';
 $string['mauticurlvalidateerror'] = 'Please insert a valid full url, which starts with http:// or https://';
