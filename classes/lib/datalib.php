@@ -19,6 +19,13 @@ class datalib {
     public function createformevent($data) {
         global $DB, $CFG;
 
+        // Validate and sanitize Mautic URL and form ID
+        $data->mauticurl = filter_var($data->mauticurl, FILTER_SANITIZE_URL);
+        if (!$data->mauticurl) {
+            throw new Exception('Invalid Mautic URL');
+        }
+        $data->mauticformid = (int) $data->mauticformid;
+
         $dataobject = $this->format_form_data($data);
         $eventid = $DB->insert_record($this->tableformevent, $dataobject['eventform'], $returnid = true, $bulk = false);
 
@@ -56,6 +63,13 @@ class datalib {
 
     public function updateformevent($data) {
         global $DB;
+
+        // Validate and sanitize Mautic URL and form ID
+        $data->mauticurl = filter_var($data->mauticurl, FILTER_SANITIZE_URL);
+        if (!$data->mauticurl) {
+            throw new Exception('Invalid Mautic URL');
+        }
+        $data->mauticformid = (int) $data->mauticformid;
         
         $dataobject = $this->format_form_data($data);
         $this->updateformdata($dataobject);

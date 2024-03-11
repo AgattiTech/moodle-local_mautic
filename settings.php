@@ -2,7 +2,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once('../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 require_once('classes/form/settings_form.php');
 require_once('classes/lib/admin_setting_configurl.php');
 
